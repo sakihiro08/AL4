@@ -11,6 +11,7 @@ GameScene::~GameScene()
 {
 	delete spriteBG;
 	delete object3d;
+	
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
@@ -35,8 +36,13 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	// 3Dオブジェクト生成
 	object3d = Object3d::Create();
 	object3d->Update();
+	//テクスチャ２番に書き込み
+	Sprite::LoadTexture(2, L"Resources/texture.png");
+	//座標0,0
+	sprite1 = Sprite::Create(2, { 0,0 });
+	//座標500,500
+	sprite2 = Sprite::Create(2, { 500,500},{1,0,0,1},{0,0},false,true);
 }
-
 void GameScene::Update()
 {
 	// オブジェクト移動
@@ -63,7 +69,16 @@ void GameScene::Update()
 		if (input->PushKey(DIK_D)) { Object3d::CameraMoveVector({ +1.0f,0.0f,0.0f }); }
 		else if (input->PushKey(DIK_A)) { Object3d::CameraMoveVector({ -1.0f,0.0f,0.0f }); }
 	}
-
+	//スペース
+	if (input->PushKey(DIK_SPACE))
+	{
+	//現在
+		XMFLOAT2 position = sprite1->GetPosition();
+		//移動あと
+		position.x += 1.0f;
+		//座標
+		sprite1->SetPosition(position);
+	}
 	object3d->Update();
 }
 
@@ -71,6 +86,7 @@ void GameScene::Draw()
 {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
+	
 
 #pragma region 背景スプライト描画
 	// 背景スプライト描画前処理
@@ -110,6 +126,9 @@ void GameScene::Draw()
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+	sprite1->Draw();
+	sprite2->Draw();
+
 
 	// デバッグテキストの描画
 	debugText.DrawAll(cmdList);

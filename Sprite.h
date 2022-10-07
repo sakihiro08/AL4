@@ -105,7 +105,8 @@ public: // メンバ関数
 	/// コンストラクタ
 	/// </summary>
 	Sprite(UINT texNumber, XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
-	
+	//座標の取得
+	const XMFLOAT2& GetPosition() { return position; }
 	/// <summary>
 	/// 初期化
 	/// </summary>
