@@ -403,7 +403,7 @@ void Object3d::CreateModel()
 	//ファイルストリーム
 	std::ifstream file;
 	//.objファイル
-	file.open("Resources/triangle/triangle.obj");
+	file.open("Resources/triangle_tex/triangle_tex.obj");
 	if (file.fail())
 	{
 		assert(0);
@@ -435,9 +435,9 @@ void Object3d::CreateModel()
 			//座標データに追加
 			positions.emplace_back(position);
 			//頂点
-			VertexPosNormalUv vertex{};
+		/*	VertexPosNormalUv vertex{};
 			vertex.pos = position;
-			vertices.emplace_back(vertex);
+			vertices.emplace_back(vertex);*/
 		}
 		if (key == "f")
 		{
@@ -447,13 +447,48 @@ void Object3d::CreateModel()
 			while (getline(line_stream, index_string, ' ')) {
 				//頂点インデックス１個分
 				std::istringstream index_stream(index_string);
-				unsigned short indexPosition;
+				unsigned short indexPosition,indexNormal,indexTexcoord;
 				index_stream >> indexPosition;
+				index_stream.seekg(1, ios_base::cur);//スラッシュ都バス
+				index_stream >> indexTexcoord;
+				index_stream.seekg(1, ios_base::cur);//スラッシュ都バス
+				index_stream >> indexNormal;
+				//頂点データの追加
+				VertexPosNormalUv vertex{};
+				vertex.pos = positions[indexPosition - 1];
+				vertex.normal = normals[indexNormal - 1];
+				vertex.uv = texcoords[indexTexcoord - 1];
+				vertices.emplace_back(vertex);
+				//インデックス追加
+				indices.emplace_back((unsigned short)indices.size());
 				//頂点追加あ
-				indices.emplace_back(indexPosition - 1);
+				//indices.emplace_back(indexPosition - 1);
 			}
 		}
-
+		//戦闘がｖｔ(テクスチャ
+		if (key == "vt")
+		{
+			//U,V成分
+			XMFLOAT2 texcoord{};
+			line_stream >> texcoord.x;
+			line_stream >> texcoord.y;
+			//V方向変換
+			texcoord.y = 1.0f - texcoord.y;
+			//テクスチャ座標
+			texcoords.emplace_back(texcoord);
+         }
+		//戦闘がｖn(ほうせんベクトル
+		if (key == "vt")
+		{
+			//U,V成分
+			XMFLOAT3 normal{};
+			line_stream >> normal.x;
+			line_stream >> normal.y;
+			line_stream >> normal.z;
+			
+			//テクスチャ座標
+			normals.emplace_back(normal);
+		}
 	}
 	file.close();
 
