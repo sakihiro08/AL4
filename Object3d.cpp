@@ -416,8 +416,7 @@ void Object3d::CreateModel()
 	vector<XMFLOAT2>texcoords;//テクスチャ
 		//1行ずつ
 	string line;
-	static std::vector<VertexPosNormalUv>vertices;
-	static std::vector<unsigned short>indices;
+	
 	while (getline(file, line))
 	{
 		//１ぎょうぶんの文字列を
