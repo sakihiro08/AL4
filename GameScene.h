@@ -52,6 +52,7 @@ public: // メンバ関数
 	void Draw();
 	Sphere sphere;
 	Plane plane;
+	Triangle triangle;
 private: // メンバ変数
 	DirectXCommon* dxCommon = nullptr;
 	Input* input = nullptr;

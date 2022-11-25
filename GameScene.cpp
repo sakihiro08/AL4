@@ -54,6 +54,11 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 	sphere.radius = 1.0f;
 	plane.normal = XMVectorSet(0, 1, 1, 0);
 	plane.distance = 0.0f;
+	triangle.p0 = XMVectorSet(-1.0f, 0, -1.0f, 1);
+	triangle.p1 = XMVectorSet(-1.0f, 0, +1.0f, 1);
+	triangle.p2 = XMVectorSet(+1.0f, 0, -1.0f, 1);
+	triangle.normal = XMVectorSet(0.0f, 1.0f, 0.0f, 0);
+
 }
 void GameScene::Update()
 {
@@ -126,19 +131,12 @@ void GameScene::Update()
 	if (hit) {
 		debugText.Print("HIT", 50, 200, 1.0f);
 	}
-	/*XMVECTOR inter;
-	bool hit = Collision::CheakSphere2Plane(sphere, plane, &inter);
-	if (hit) {
-		debugText.Print("HIT", 50, 200, 1.0f);
-		spherestr << "("
-			<< std::fixed << std::setprecision(2)
-			<< inter.m128_f32[0] << ","
-			<< inter.m128_f32[1] << ","
-			<< inter.m128_f32[2] << ")";
-		debugText.Print(spherestr.str(), 50, 220, 1.0f);
-	}*/
 
-
+	
+	bool Trianglehit = Collision::CheakSphere2Triangle(sphere,triangle);
+	if (Trianglehit) {
+		debugText.Print("HIT", 50, 220, 1.0f);
+	}
 }
 void GameScene::Draw()
 {
