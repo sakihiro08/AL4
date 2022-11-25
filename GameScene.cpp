@@ -1,6 +1,8 @@
 ﻿#include "GameScene.h"
 #include <cassert>
-
+#include"Collision.h"
+#include<sstream>
+#include<iomanip>
 using namespace DirectX;
 
 GameScene::GameScene()
@@ -11,7 +13,7 @@ GameScene::~GameScene()
 {
 	delete spriteBG;
 	delete object3d;
-	
+
 }
 
 void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
@@ -37,13 +39,21 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input)
 
 
 	object3d = Object3d::Create();
-	object3d->Update();
+	object3d2 = Object3d::Create();
+	XMFLOAT3 position2 = object3d2->GetPosition();
+	position2 = { 25.0f,30.0f,30.0f };
+	object3d2->SetPosition(position2);
+	object3d2->Update();
 	//テクスチャ２番に書き込み
 	Sprite::LoadTexture(2, L"Resources/texture.png");
 	//座標0,0
 	sprite1 = Sprite::Create(2, { 0,0 });
 	//座標500,500
-	sprite2 = Sprite::Create(2, { 500,500},{1,0,0,1},{0,0},false,true);
+	sprite2 = Sprite::Create(2, { 500,500 }, { 1,0,0,1 }, { 0,0 }, false, true);
+	sphere.center = XMVectorSet(0, 2, 0, 1);
+	sphere.radius = 1.0f;
+	plane.normal = XMVectorSet(0, 1, 1, 0);
+	plane.distance = 0.0f;
 }
 void GameScene::Update()
 {
@@ -61,6 +71,7 @@ void GameScene::Update()
 
 		// 座標の変更を反映
 		object3d->SetPosition(position);
+
 	}
 
 	// カメラ移動
@@ -74,7 +85,7 @@ void GameScene::Update()
 	//スペース
 	if (input->PushKey(DIK_SPACE))
 	{
-	//現在
+		//現在
 		XMFLOAT2 position = sprite1->GetPosition();
 		//移動あと
 		position.x += 1.0f;
@@ -82,19 +93,64 @@ void GameScene::Update()
 		sprite1->SetPosition(position);
 	}
 	object3d->Update();
-}
+	object3d2->Update();
+	{
+		XMVECTOR moveY = XMVectorSet(0, 0.01f, 0, 0);
+		if (input->PushKey(DIK_X))
+		{
+			sphere.center += moveY;
+		}
+		else if (input->PushKey(DIK_Z))
+		{
+			sphere.center -= moveY;
+		}
+		XMVECTOR moveX = XMVectorSet(0.01f, 0, 0, 0);
+		if (input->PushKey(DIK_C))
+		{
+			sphere.center += moveX;
+		}
+		else if (input->PushKey(DIK_V
+		))
+		{
+			sphere.center -= moveX;
+		}
+	}
+	std::ostringstream spherestr;
+	spherestr << "Sphere:("
+		<< std::fixed << std::setprecision(2)
+		<< sphere.center.m128_f32[0] << ","
+		<< sphere.center.m128_f32[1] << ","
+		<< sphere.center.m128_f32[2] << ")";
+	debugText.Print(spherestr.str(), 50, 180, 1.0f);
+	bool hit = Collision::CheakSphere2Plane(sphere, plane);
+	if (hit) {
+		debugText.Print("HIT", 50, 200, 1.0f);
+	}
+	/*XMVECTOR inter;
+	bool hit = Collision::CheakSphere2Plane(sphere, plane, &inter);
+	if (hit) {
+		debugText.Print("HIT", 50, 200, 1.0f);
+		spherestr << "("
+			<< std::fixed << std::setprecision(2)
+			<< inter.m128_f32[0] << ","
+			<< inter.m128_f32[1] << ","
+			<< inter.m128_f32[2] << ")";
+		debugText.Print(spherestr.str(), 50, 220, 1.0f);
+	}*/
 
+
+}
 void GameScene::Draw()
 {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
-	
+
 
 #pragma region 背景スプライト描画
 	// 背景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
 	// 背景スプライト描画
-	//spriteBG->Draw();
+	spriteBG->Draw();
 
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
@@ -111,8 +167,8 @@ void GameScene::Draw()
 	Object3d::PreDraw(cmdList);
 
 	// 3Dオブクジェクトの描画
-	object3d->Draw();
-
+	/*object3d->Draw();
+	object3d2->Draw();*/
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>

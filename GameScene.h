@@ -6,7 +6,7 @@
 #include "Sprite.h"
 #include "Object3d.h"
 #include "DebugText.h"
-
+#include"CollisionPrimitive.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -50,7 +50,8 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-
+	Sphere sphere;
+	Plane plane;
 private: // メンバ変数
 	DirectXCommon* dxCommon = nullptr;
 	Input* input = nullptr;
@@ -61,6 +62,7 @@ private: // メンバ変数
 	/// </summary>
 	Sprite* spriteBG = nullptr;
 	Object3d* object3d = nullptr;
+	Object3d* object3d2 = nullptr;
 	Sprite* sprite1 = nullptr;
 	Sprite* sprite2 = nullptr;
 };

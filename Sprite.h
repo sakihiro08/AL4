@@ -156,6 +156,8 @@ public: // メンバ関数
 	/// <param name="texSize">テクスチャサイズ</param>
 	void SetTextureRect(const XMFLOAT2& texBase, const XMFLOAT2& texSize);
 
+
+
 	/// <summary>
 	/// 描画
 	/// </summary>
